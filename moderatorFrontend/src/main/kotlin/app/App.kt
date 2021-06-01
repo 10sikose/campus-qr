@@ -61,7 +61,7 @@ class App : RComponent<AppProps, AppState>() {
             label = Url.GUEST_CHECK_IN.title,
             icon = contactMailIcon,
             url = Url.GUEST_CHECK_IN
-          )
+          ),
         )
       } else {
         emptyList()
@@ -84,6 +84,13 @@ class App : RComponent<AppProps, AppState>() {
           label = Url.REPORT.title,
           icon = blurCircularIcon,
           url = Url.REPORT
+        )
+      }
+      if (state.userData?.clientUser?.canViewCheckIns == true) {
+        items += SideDrawerItem(
+          label = Url.ALL_CHECK_INS.title,
+          icon = assignmentIcon,
+          url = Url.ALL_CHECK_INS
         )
       }
 

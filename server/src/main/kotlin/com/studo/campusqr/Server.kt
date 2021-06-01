@@ -144,6 +144,9 @@ suspend fun main() {
         get("campusqr-admin.js") { call.returnModeratorJs() }
         get("/{...}") { call.returnModeratorIndexHtml() }
       }
+      route("allCheckIns") {
+        get("listAllCheckIns") {call.getAuthenticatedCall()?.listAllCheckIns()}
+      }
       static("/static") {
         resources()
       }

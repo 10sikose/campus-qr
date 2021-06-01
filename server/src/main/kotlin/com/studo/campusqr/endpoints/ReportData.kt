@@ -2,6 +2,7 @@ package com.studo.campusqr.endpoints
 
 import com.moshbit.katerbase.*
 import com.studo.campusqr.common.ActiveCheckIn
+import com.studo.campusqr.common.CheckInInfo
 import com.studo.campusqr.common.ReportData
 import com.studo.campusqr.common.emailSeparators
 import com.studo.campusqr.database.BackendLocation
@@ -11,6 +12,7 @@ import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.serverScope
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
+import io.ktor.util.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -302,4 +304,32 @@ suspend fun List<CheckIn>.getLocationMap(): Map<String, BackendLocation> = runOn
   MainDatabase.getCollection<BackendLocation>()
     .find(BackendLocation::_id inArray map { it.locationId }.distinct())
     .associateBy { it._id }
+}
+
+suspend fun AuthenticatedApplicationCall.listAllCheckIns() {
+  if (!user.canEditAnyLocationAccess) {
+    respondForbidden()
+    return
+  }
+
+  val checkIns = runOnDb {
+    getCollection<CheckIn>()
+      .find()
+      .sortByDescending(CheckIn::date) // No need for an index here, this is probably a very small list
+      .toList()
+  }
+
+  print(checkIns)
+
+  respondObject(
+    checkIns.map { checkIn ->
+      CheckInInfo(
+        id = checkIn._id,
+        seat = checkIn.seat,
+        checkInDate = checkIn.date.toString(),
+        email = checkIn.email
+      )
+    }
+  )
+
 }

@@ -156,6 +156,13 @@ class ActiveCheckIn(
   val email: String,
 ) : ClientPayload
 
+class CheckInInfo(
+  val id: String,
+  val seat: Int?,
+  val checkInDate: String,
+  val email: String,
+) : ClientPayload
+
 class EditSeatFilter(
   val seat: Int,
   val filteredSeats: List<Int>,
